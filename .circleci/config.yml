@@ -12,13 +12,13 @@ jobs:
       - serverless/setup
       - restore_cache:
           keys:
-            - modules-cache-v1-{{ checksum "package.json" }}
-            - modules-cache-v1
+            - dependencies-v1-{{ checksum "package.json" }}
+            - dependencies-v1
       - run:
           name: install
           command: make install
       - save_cache:
-          key: modules-cache-v1-{{ checksum "package.json" }}
+          key: dependencies-v1-{{ checksum "package.json" }}
           paths:
             - node_modules
       - run:
