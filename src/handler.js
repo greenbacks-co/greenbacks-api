@@ -4,7 +4,7 @@ import StorageClient from 'storage/client';
 import FinanceClient from 'finance';
 import settings from 'settings';
 
-// test
+// test 2
 
 const buildFinanceClient = () => {
   try {
