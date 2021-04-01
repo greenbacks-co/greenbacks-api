@@ -1,0 +1,25 @@
+service: greenbacks-api
+
+plugins:
+  - serverless-offline
+  - serverless-webpack
+
+provider:
+  name: aws
+
+functions:
+  graphql:
+    handler: src/handler.default
+    events:
+      - http:
+          authorizer: authorizer
+          cors: true
+          method: post
+          path: graphql
+      - http:
+          authorizer: authorizer
+          cors: true
+          method: get
+          path: graphql
+  authorizer:
+    handler: src/authorizer.default

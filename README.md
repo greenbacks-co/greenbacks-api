@@ -1,1 +1,1 @@
-# greenbacks-api-dup
+# greenbacks-api

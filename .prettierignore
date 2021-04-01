@@ -1,0 +1,9 @@
+.eslintrc.js
+package.json
+package-lock.json
+.prettierrc.json
+node_modules
+README.md
+serverless.yaml
+.webpack/*
+webpack.config.js
