@@ -1,0 +1,66 @@
+version: 2.1
+
+orbs:
+  aws-cli: circleci/aws-cli@1.0
+  serverless: circleci/serverless-framework@1.0
+
+jobs:
+  build_and_test:
+    executor: serverless/default
+    steps:
+      - checkout
+      - serverless/setup
+      - restore_cache:
+          keys:
+            - dependencies-v1-{{ checksum "package.json" }}
+            - dependencies-v1
+      - run:
+          name: install
+          command: make install
+      - save_cache:
+          key: dependencies-v1-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+      - run:
+          name: lint
+          command: make lint
+      - run:
+          name: test (unit)
+          command: make test
+      #- run:
+      #    name: test (integration)
+      #    command: make test-integration
+      #- run:
+      #    name: package
+      #    command: make package
+
+  build_and_deploy:
+    executor: serverless/default
+    steps:
+      - checkout
+      - aws-cli/setup
+      - serverless/setup
+      - run:
+          name: install
+          command: |
+            sudo npm install -g serverless
+            make install
+      - run:
+          name: lint
+          command: make lint
+      - run:
+          name: deploy
+          command: make deploy
+
+workflows:
+  version: 2
+  test_build_deploy:
+    jobs:
+      - build_and_test:
+          filters:
+            branches:
+              ignore: master
+      #- build_and_deploy:
+      #    filters:
+      #      branches:
+      #        only: master
