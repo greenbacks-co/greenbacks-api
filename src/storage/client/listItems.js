@@ -5,6 +5,8 @@ import {
   MissingTableError,
 } from './errors';
 
+// test
+
 const listItems = (input) => {
   validateInput(input);
   const { client, key, table } = input;
