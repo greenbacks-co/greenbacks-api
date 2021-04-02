@@ -46,6 +46,18 @@ class Connections {
       } else throw error;
     }
   }
+
+  async list() {
+    try {
+      return await this.storageClient.listItems({
+        key: { user: this.user },
+        table: this.table,
+      });
+    } catch (error) {
+      if (error instanceof MissingTableError) return [];
+      throw error;
+    }
+  }
 }
 
 const validateConstructorInput = ({ environment, storageClient, user }) => {
