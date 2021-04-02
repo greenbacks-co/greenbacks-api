@@ -29,9 +29,14 @@ const queries = {
     _args,
     { dataSources: { financeClient } }
   ) => financeClient.createConnectionInitializationToken({ id: 'test-user' }),
-  getConnectedInstitutions: async () => [
-    { id: 'asdf', name: 'test national bank' },
-  ],
+  getConnectedInstitutions: async (
+    _source,
+    _args,
+    { dataSources: { storageClient }, environment, user }
+  ) => {
+    const connections = new Connections({ environment, storageClient, user });
+    return connections.list();
+  },
 };
 
 const resolvers = {
