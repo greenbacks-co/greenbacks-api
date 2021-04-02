@@ -12,12 +12,11 @@ const mutations = {
     const { id, name } = await financeClient.describeConnection({
       token: accessToken,
     });
-    const connections = new Connections({ environment, storageClient });
+    const connections = new Connections({ environment, storageClient, user });
     await connections.create({
       id,
       name,
       token,
-      user,
     });
     console.log('stored new connection');
     return { id, name };
