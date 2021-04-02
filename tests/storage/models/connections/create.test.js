@@ -100,7 +100,7 @@ test('test create with name foo calls create with name foo', async () => {
   input.name = 'foo';
   const connections = new Connections(constructorInput);
   await connections.create(input);
-  expect(client.createdConnection.item.name).toBe('foo');
+  expect(client.createdConnection.item.institution.name).toBe('foo');
 });
 
 test('test create with name bar calls create with name bar', async () => {
@@ -110,7 +110,7 @@ test('test create with name bar calls create with name bar', async () => {
   input.name = 'bar';
   const connections = new Connections(constructorInput);
   await connections.create(input);
-  expect(client.createdConnection.item.name).toBe('bar');
+  expect(client.createdConnection.item.institution.name).toBe('bar');
 });
 
 test('test create without name throws input error', async () => {
