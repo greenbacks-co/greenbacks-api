@@ -44,8 +44,9 @@ export const createTable = async (
     TableName: name,
   };
   return new Promise((resolve, reject) => {
-    client.createTable(input, (error) => {
+    client.createTable(input, async (error) => {
       if (error) reject(error);
+      await delay(DELAYS.createTable);
       resolve();
     });
   });
