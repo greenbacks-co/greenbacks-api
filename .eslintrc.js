@@ -20,7 +20,7 @@ module.exports = {
   rules: {
     'import/no-named-as-default': 'off',
     'max-classes-per-file': 'off',
-    'no-console': 'off',
+    'no-console': 'error',
     'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     'no-use-before-define': 'off',
   },

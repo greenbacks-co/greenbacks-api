@@ -1,3 +1,4 @@
+import logger from 'logger';
 import { Connections } from 'storage/models';
 
 const mutations = {
@@ -21,7 +22,7 @@ const mutations = {
       name,
       token,
     });
-    console.log('stored new connection');
+    logger.info('stored new connection');
     return { id, institution: { name } };
   },
 };

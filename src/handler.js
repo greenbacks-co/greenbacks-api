@@ -1,8 +1,9 @@
 import buildServer from 'api';
 import { decodeToken } from 'authorizer';
-import StorageClient from 'storage/client';
 import FinanceClient from 'finance';
+import logger from 'logger';
 import settings from 'settings';
+import StorageClient from 'storage/client';
 
 const buildFinanceClient = () => {
   try {
@@ -13,7 +14,7 @@ const buildFinanceClient = () => {
     });
   } catch (error) {
     const message = `Failed to initialize finance client: ${error.message}`;
-    console.error(message);
+    logger.error(message);
     throw new Error(message);
   }
 };
@@ -28,7 +29,7 @@ const buildStorageClient = () => {
     });
   } catch (error) {
     const message = `Failed to initialize storage client: ${error.message}`;
-    console.error(message);
+    logger.error(message);
     throw new Error(message);
   }
 };
