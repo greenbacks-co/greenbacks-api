@@ -18,8 +18,10 @@ class Connections {
       item: {
         createdDate: now,
         id,
+        institution: {
+          name,
+        },
         modifiedDate: now,
-        name,
         token,
         user: this.user,
       },

@@ -91,12 +91,16 @@ test('test list with error throws error', async () => {
 });
 
 test('test list returns list from storage client', async () => {
-  const storageClient = new ClientStub({ result: [{ test: 'test' }] });
+  const storageClient = new ClientStub({
+    result: [{ id: 'test-id', institution: { name: 'test-name' } }],
+  });
   const connections = new Connections({
     environment: 'foo',
     storageClient,
     user: 'foo',
   });
   const list = await connections.list();
-  expect(list).toStrictEqual([{ test: 'test' }]);
+  expect(list).toStrictEqual([
+    { id: 'test-id', institution: { name: 'test-name' } },
+  ]);
 });

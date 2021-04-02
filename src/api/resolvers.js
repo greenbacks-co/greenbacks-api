@@ -1,7 +1,7 @@
 import { Connections } from 'storage/models';
 
 const mutations = {
-  connectInstitution: async (
+  createConnection: async (
     _,
     { input: { token } },
     { dataSources: { financeClient, storageClient }, environment, user }
@@ -22,7 +22,7 @@ const mutations = {
       token,
     });
     console.log('stored new connection');
-    return { id, name };
+    return { id, institution: { name } };
   },
 };
 
@@ -32,7 +32,7 @@ const queries = {
     _args,
     { dataSources: { financeClient } }
   ) => financeClient.createConnectionInitializationToken({ id: 'test-user' }),
-  getConnectedInstitutions: async (
+  getConnections: async (
     _source,
     _args,
     { dataSources: { storageClient }, environment, user }
