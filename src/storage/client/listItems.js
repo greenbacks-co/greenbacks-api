@@ -53,7 +53,7 @@ const removeTypes = (object) => {
   if (B) return B;
   if (N) return N;
   if (S) return S;
-  let result = {};
+  const result = {};
   Object.entries(object).forEach(([key, value]) => {
     if (typeof value === 'object') {
       result[key] = removeTypes(value);
@@ -62,10 +62,6 @@ const removeTypes = (object) => {
     }
   });
   return result;
-};
-
-const isType = (key) => {
-  return ['B', 'N', 'S'].includes(key);
 };
 
 export default listItems;
