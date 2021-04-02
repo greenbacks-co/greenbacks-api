@@ -1,4 +1,5 @@
 import { InputError } from 'errors';
+import logger from 'logger';
 import {
   AuthenticationError,
   isAuthenticationError,
@@ -22,6 +23,7 @@ const createTable = (input) => {
         reject(error);
       }
       setTimeout(() => {
+        logger.info(`created table '${name}'`);
         resolve();
       }, 7000);
     });

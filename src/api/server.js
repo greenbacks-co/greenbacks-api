@@ -1,6 +1,7 @@
 import { Server } from 'api/graphql';
 import resolvers from 'api/resolvers';
 import schema from 'api/schema';
+import logger from 'logger';
 
 const buildServer = ({ buildClients, environment, parseUser }) =>
   new Server({
@@ -22,14 +23,14 @@ const buildServer = ({ buildClients, environment, parseUser }) =>
 
 const loggingPlugin = {
   requestDidStart({ request: { query } }) {
-    console.log(query.trim());
+    logger.debug(query.trim());
     return {
       didEncounterErrors({ errors }) {
         let message = 'encountered errors:';
         errors.forEach((error) => {
           message += `\n  ${error.name}: ${error.message}`;
         });
-        console.error(message);
+        logger.error(message);
       },
     };
   },
