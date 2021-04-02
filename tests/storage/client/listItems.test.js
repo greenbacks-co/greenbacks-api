@@ -4,8 +4,12 @@ import { InputError } from 'errors';
 import StorageClient from 'storage/client';
 
 class SdkStub {
+  constructor({ result = [] } = {}) {
+    this.result = result;
+  }
+
   query(input, callback) {
-    callback(null, { Items: [] });
+    callback(null, { Items: this.result });
   }
 }
 
@@ -91,4 +95,43 @@ test('list items with correct input does not throw', async () => {
     client: new SdkStub(),
   });
   await client.listItems(input);
+});
+
+test('list items with nested string removes string identifier', async () => {
+  const credentials = getCredentials();
+  const input = getInput();
+  const client = new StorageClient({
+    ...credentials,
+    client: new SdkStub({
+      result: [{ id: 'test', nested: { test: { S: 'test' } } }],
+    }),
+  });
+  const result = await client.listItems(input);
+  expect(result).toStrictEqual([{ id: 'test', nested: { test: 'test' } }]);
+});
+
+test('list items with nested number removes number identifier', async () => {
+  const credentials = getCredentials();
+  const input = getInput();
+  const client = new StorageClient({
+    ...credentials,
+    client: new SdkStub({
+      result: [{ id: 'test', nested: { test: { N: 1 } } }],
+    }),
+  });
+  const result = await client.listItems(input);
+  expect(result).toStrictEqual([{ id: 'test', nested: { test: 1 } }]);
+});
+
+test('list items with nested boolean removes boolean identifier', async () => {
+  const credentials = getCredentials();
+  const input = getInput();
+  const client = new StorageClient({
+    ...credentials,
+    client: new SdkStub({
+      result: [{ id: 'test', nested: { test: { B: true } } }],
+    }),
+  });
+  const result = await client.listItems(input);
+  expect(result).toStrictEqual([{ id: 'test', nested: { test: true } }]);
 });
