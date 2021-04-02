@@ -6,10 +6,13 @@ const mutations = {
     { input: { token } },
     { dataSources: { financeClient, storageClient }, environment, user }
   ) => {
-    const accessToken = await financeClient.exchangeTemporaryConnectionToken({
+    const {
+      accessToken,
+      id,
+    } = await financeClient.exchangeTemporaryConnectionToken({
       token,
     });
-    const { id, name } = await financeClient.describeConnection({
+    const { name } = await financeClient.describeConnection({
       token: accessToken,
     });
     const connections = new Connections({ environment, storageClient, user });
