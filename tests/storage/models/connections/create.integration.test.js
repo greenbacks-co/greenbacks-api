@@ -20,54 +20,58 @@ afterAll(async () => {
   await deleteTablesAfterDelay(TABLE_PREFIX);
 }, DELAYS.deleteTables);
 
-test('test create with existing table stores item', async () => {
-  const environment = `${TABLE_PREFIX}-${uuid()}`;
-  const name = `${environment}-connections`;
-  const key = [
-    {
-      AttributeName: 'user',
-      KeyType: 'HASH',
-    },
-    {
-      AttributeName: 'token',
-      KeyType: 'RANGE',
-    },
-  ];
-  const attributes = [
-    {
-      AttributeName: 'user',
-      AttributeType: 'S',
-    },
-    {
-      AttributeName: 'token',
-      AttributeType: 'S',
-    },
-  ];
-  await createTable(name, key, attributes);
-  const storageClient = new StorageClient({ credentials: getCredentials() });
-  const connections = new Connections({
-    environment,
-    storageClient,
-    user: 'user',
-  });
-  await delay(DELAYS.createTable);
-  await connections.create({
-    id: 'id',
-    name: 'name',
-    token: 'token',
-  });
-  const item = await getItem(name, null, null, {
-    user: 'user',
-    token: 'token',
-  });
-  expect(item.createdDate).toMatch(ISO_FORMAT);
-  expect(item.id).toBe('id');
-  expect(item.modifiedDate).toMatch(ISO_FORMAT);
-  expect(item.name).toBe('name');
-  expect(item.token).toBe('token');
-  expect(item.user).toBe('user');
-  expect(item.createdDate).toBe(item.modifiedDate);
-}, 30000);
+test(
+  'test create with existing table stores item',
+  async () => {
+    const environment = `${TABLE_PREFIX}-${uuid()}`;
+    const name = `${environment}-connections`;
+    const key = [
+      {
+        AttributeName: 'user',
+        KeyType: 'HASH',
+      },
+      {
+        AttributeName: 'token',
+        KeyType: 'RANGE',
+      },
+    ];
+    const attributes = [
+      {
+        AttributeName: 'user',
+        AttributeType: 'S',
+      },
+      {
+        AttributeName: 'token',
+        AttributeType: 'S',
+      },
+    ];
+    await createTable(name, key, attributes);
+    const storageClient = new StorageClient({ credentials: getCredentials() });
+    const connections = new Connections({
+      environment,
+      storageClient,
+      user: 'user',
+    });
+    await delay(DELAYS.createTable);
+    await connections.create({
+      id: 'id',
+      name: 'name',
+      token: 'token',
+    });
+    const item = await getItem(name, null, null, {
+      user: 'user',
+      token: 'token',
+    });
+    expect(item.createdDate).toMatch(ISO_FORMAT);
+    expect(item.id).toBe('id');
+    expect(item.modifiedDate).toMatch(ISO_FORMAT);
+    expect(item.name).toBe('name');
+    expect(item.token).toBe('token');
+    expect(item.user).toBe('user');
+    expect(item.createdDate).toBe(item.modifiedDate);
+  },
+  DELAYS.longTest
+);
 
 test(
   'test create with missing table creates table and stores item',

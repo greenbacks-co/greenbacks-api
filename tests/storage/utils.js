@@ -63,7 +63,7 @@ export const DELAYS = {
   beforeDeleteTables: 5000,
   createTable: 10000,
   deleteTables: 60000,
-  longTest: 20000,
+  longTest: 30000,
 };
 
 export const deleteTable = async (table) => {
