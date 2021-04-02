@@ -1,17 +1,31 @@
 import DynamoDB from 'aws-sdk/clients/dynamodb';
 
-import createTable from './createTable';
 import addItem from './addItem';
+import createTable from './createTable';
+import listItems from './listItems';
 
 class StorageClient {
-  constructor({ credentials: { id, secret }, region = 'us-east-1' }) {
+  constructor({ client, credentials: { id, secret }, region = 'us-east-1' }) {
     const configuration = {
       accessKeyId: id,
       region,
       secretAccessKey: secret,
     };
-    this.client = new DynamoDB(configuration);
-    this.documentClient = new DynamoDB.DocumentClient(configuration);
+    if (client) {
+      this.client = client;
+      this.documentClient = client;
+    } else {
+      this.client = new DynamoDB(configuration);
+      this.documentClient = new DynamoDB.DocumentClient(configuration);
+    }
+  }
+
+  async addItem(input) {
+    const result = await addItem({
+      ...input,
+      client: this.documentClient,
+    });
+    return result;
   }
 
   async createTable(input) {
@@ -22,8 +36,8 @@ class StorageClient {
     return result;
   }
 
-  async addItem(input) {
-    const result = await addItem({
+  async listItems(input) {
+    const result = await listItems({
       ...input,
       client: this.documentClient,
     });

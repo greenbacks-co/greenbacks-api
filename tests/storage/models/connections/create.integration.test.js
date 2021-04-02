@@ -14,7 +14,7 @@ import {
 } from '../../utils';
 
 const ISO_FORMAT = /\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/;
-const TABLE_PREFIX = 'test-storage-models-connections';
+const TABLE_PREFIX = 'test-storage-models-connections-create';
 
 afterAll(async () => {
   await deleteTablesAfterDelay(TABLE_PREFIX);
@@ -47,13 +47,16 @@ test(
     ];
     await createTable(name, key, attributes);
     const storageClient = new StorageClient({ credentials: getCredentials() });
-    const connections = new Connections({ environment, storageClient });
+    const connections = new Connections({
+      environment,
+      storageClient,
+      user: 'user',
+    });
     await delay(DELAYS.createTable);
     await connections.create({
       id: 'id',
       name: 'name',
       token: 'token',
-      user: 'user',
     });
     const item = await getItem(name, null, null, {
       user: 'user',
@@ -75,12 +78,15 @@ test(
   async () => {
     const environment = `${TABLE_PREFIX}-${uuid()}`;
     const storageClient = new StorageClient({ credentials: getCredentials() });
-    const connections = new Connections({ environment, storageClient });
+    const connections = new Connections({
+      environment,
+      storageClient,
+      user: 'user',
+    });
     await connections.create({
       id: 'id',
       name: 'name',
       token: 'token',
-      user: 'user',
     });
     const item = await getItem(`${environment}-connections`, null, null, {
       user: 'user',

@@ -1,22 +1,26 @@
 import { gql } from 'api/graphql';
 
 const schema = gql`
-  type ConnectedInstitution {
+  type Connection {
     id: ID!
+    institution: Institution!
+  }
+
+  type Institution {
     name: String!
   }
 
-  input ConnectInstitutionInput {
+  input CreateConnectionInput {
     token: String!
   }
 
   type Mutation {
-    connectInstitution(input: ConnectInstitutionInput!): ConnectedInstitution
+    createConnection(input: CreateConnectionInput!): Connection
   }
 
   type Query {
     getConnectionInitializationToken: String!
-    getConnectedInstitutions: [ConnectedInstitution]
+    getConnections: [Connection]
   }
 `;
 

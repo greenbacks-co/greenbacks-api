@@ -50,10 +50,10 @@ class FinanceClient {
       throw error;
     }
     const {
-      institution: { institution_id: id, name },
+      institution: { institution_id: institutionId, name },
     } = institution;
     return {
-      id,
+      institutionId,
       name,
     };
   }
@@ -63,7 +63,7 @@ class FinanceClient {
     const { token } = input;
     try {
       const response = await this.client.exchangePublicToken(token);
-      return response.access_token;
+      return { accessToken: response.access_token, id: response.item_id };
     } catch (error) {
       if (error.message === 'INVALID_FIELD') throw new AuthenticationError();
       throw new TokenError();

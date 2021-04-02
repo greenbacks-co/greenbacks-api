@@ -1,26 +1,28 @@
 import { Connections } from 'storage/models';
 
 const mutations = {
-  connectInstitution: async (
+  createConnection: async (
     _,
     { input: { token } },
     { dataSources: { financeClient, storageClient }, environment, user }
   ) => {
-    const accessToken = await financeClient.exchangeTemporaryConnectionToken({
+    const {
+      accessToken,
+      id,
+    } = await financeClient.exchangeTemporaryConnectionToken({
       token,
     });
-    const { id, name } = await financeClient.describeConnection({
+    const { name } = await financeClient.describeConnection({
       token: accessToken,
     });
-    const connections = new Connections({ environment, storageClient });
+    const connections = new Connections({ environment, storageClient, user });
     await connections.create({
       id,
       name,
       token,
-      user,
     });
     console.log('stored new connection');
-    return { id, name };
+    return { id, institution: { name } };
   },
 };
 
@@ -30,9 +32,14 @@ const queries = {
     _args,
     { dataSources: { financeClient } }
   ) => financeClient.createConnectionInitializationToken({ id: 'test-user' }),
-  getConnectedInstitutions: async () => [
-    { id: 'asdf', name: 'test national bank' },
-  ],
+  getConnections: async (
+    _source,
+    _args,
+    { dataSources: { storageClient }, environment, user }
+  ) => {
+    const connections = new Connections({ environment, storageClient, user });
+    return connections.list();
+  },
 };
 
 const resolvers = {

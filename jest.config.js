@@ -3,6 +3,6 @@ module.exports = {
   rootDir: 'tests',
   setupFiles: ['dotenv/config'],
   testEnvironment: 'node',
-  testTimeout: 10000,
+  testTimeout: 15000,
   verbose: false,
 };

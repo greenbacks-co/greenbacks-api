@@ -44,8 +44,9 @@ export const createTable = async (
     TableName: name,
   };
   return new Promise((resolve, reject) => {
-    client.createTable(input, (error) => {
+    client.createTable(input, async (error) => {
       if (error) reject(error);
+      await delay(DELAYS.createTable);
       resolve();
     });
   });
@@ -62,7 +63,7 @@ export const DELAYS = {
   beforeDeleteTables: 5000,
   createTable: 10000,
   deleteTables: 60000,
-  longTest: 20000,
+  longTest: 30000,
 };
 
 export const deleteTable = async (table) => {
