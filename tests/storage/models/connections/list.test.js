@@ -53,7 +53,7 @@ test('test list with user foo calls list with user foo', async () => {
     user: 'foo',
   });
   await connections.list();
-  expect(storageClient.arguments.key).toStrictEqual({ user: 'foo' });
+  expect(storageClient.arguments.key.partition).toStrictEqual({ user: 'foo' });
 });
 
 test('test list with user bar calls list with user bar', async () => {
@@ -64,7 +64,7 @@ test('test list with user bar calls list with user bar', async () => {
     user: 'bar',
   });
   await connections.list();
-  expect(storageClient.arguments.key).toStrictEqual({ user: 'bar' });
+  expect(storageClient.arguments.key.partition).toStrictEqual({ user: 'bar' });
 });
 
 test('test list with missing table returns empty list', async () => {

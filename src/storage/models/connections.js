@@ -50,7 +50,7 @@ class Connections {
   async list() {
     try {
       return await this.storageClient.listItems({
-        key: { user: this.user },
+        key: { partition: { user: this.user } },
         table: this.table,
       });
     } catch (error) {
