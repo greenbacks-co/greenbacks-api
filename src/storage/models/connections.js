@@ -4,15 +4,15 @@ import { MissingTableError } from 'storage/client';
 class Connections {
   constructor(input) {
     validateConstructorInput(input);
-    const { environment, storageClient } = input;
-    this.environment = environment;
+    const { environment, storageClient, user } = input;
     this.storageClient = storageClient;
+    this.table = `${environment}-connections`;
+    this.user = user;
   }
 
   async create(input) {
     validateCreateInput(input);
-    const { id, name, token, user } = input;
-    const table = `${this.environment}-connections`;
+    const { id, name, token } = input;
     const now = new Date().toISOString();
     const addItemInput = {
       item: {
@@ -21,9 +21,9 @@ class Connections {
         modifiedDate: now,
         name,
         token,
-        user,
+        user: this.user,
       },
-      table,
+      table: this.table,
     };
     try {
       await this.storageClient.addItem(addItemInput);
@@ -40,7 +40,7 @@ class Connections {
               type: 'string',
             },
           },
-          name: table,
+          name: this.table,
         });
         await this.storageClient.addItem(addItemInput);
       } else throw error;
@@ -48,16 +48,16 @@ class Connections {
   }
 }
 
-const validateConstructorInput = ({ environment, storageClient }) => {
+const validateConstructorInput = ({ environment, storageClient, user }) => {
   if (!environment) throw new InputError('environment');
   if (!storageClient) throw new InputError('storageClient');
+  if (!user) throw new InputError('user');
 };
 
-const validateCreateInput = ({ id, name, token, user }) => {
+const validateCreateInput = ({ id, name, token }) => {
   if (!id) throw new InputError('id');
   if (!name) throw new InputError('name');
   if (!token) throw new InputError('token');
-  if (!user) throw new InputError('user');
 };
 
 export default Connections;
