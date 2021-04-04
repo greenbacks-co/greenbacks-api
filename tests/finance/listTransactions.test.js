@@ -19,7 +19,7 @@ class PlaidStub {
   async getTransactions(token, start, end, page) {
     if (this.shouldThrow) throw new Error();
     if (this.shouldThrowAuthenticationError) {
-      throw { message: 'INVALID_FIELD' };
+      throw new Error('INVALID_FIELD');
     }
     this.arguments = { end, start, page, token };
     return this.result;
