@@ -5,15 +5,18 @@ import { InputError } from 'errors';
 class FinanceClient {
   constructor(input) {
     validateConstructorInput(input);
-    const { env, id, secret } = input;
-    this.client = new Client({
-      clientID: id,
-      env: environments[env],
-      secret,
-      options: {
-        version: '2019-05-29',
-      },
-    });
+    const { client, env, id, secret } = input;
+    if (client) this.client = client;
+    else {
+      this.client = new Client({
+        clientID: id,
+        env: environments[env],
+        secret,
+        options: {
+          version: '2019-05-29',
+        },
+      });
+    }
   }
 
   async createConnectionInitializationToken(input) {
