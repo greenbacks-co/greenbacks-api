@@ -41,6 +41,19 @@ const queries = {
     const connections = new Connections({ environment, storageClient, user });
     return connections.list();
   },
+  getTransactions: async (
+    _source,
+    _args,
+    { dataSources: { financeClient, storageClient }, environment, user }
+  ) => {
+    const connections = new Connections({ environment, storageClient, user });
+    const savedConnections = await connections.list();
+    return financeClient.listTransactions({
+      end: '2021-01-31',
+      start: '2021-01-01',
+      token: savedConnections[0].token,
+    });
+  },
 };
 
 const resolvers = {
