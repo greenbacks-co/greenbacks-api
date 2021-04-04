@@ -115,6 +115,7 @@ const validateListTransactionsInput = ({ end, start, token }) => {
   if (!end) throw new InputError('end');
   if (!start) throw new InputError('start');
   if (!token) throw new InputError('token');
+  if (start > end) throw new InputError('end');
 };
 
 export class AuthenticationError extends Error {

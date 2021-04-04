@@ -161,6 +161,7 @@ test('test with start 2021-02-01 calls client with start 2021-02-01', async () =
   const client = getClient(stub);
   const input = getInput();
   input.start = '2021-02-01';
+  input.end = '2021-02-28';
   await client.listTransactions(input);
   expect(stub.arguments.start).toBe('2021-02-01');
 });
@@ -177,9 +178,21 @@ test('test with end 2021-02-28 calls client with end 2021-02-28', async () => {
   const stub = new PlaidStub();
   const client = getClient(stub);
   const input = getInput();
+  input.start = '2021-02-01';
   input.end = '2021-02-28';
   await client.listTransactions(input);
   expect(stub.arguments.end).toBe('2021-02-28');
+});
+
+test('test with end before start throws input error', async () => {
+  const stub = new PlaidStub();
+  const client = getClient(stub);
+  const input = getInput();
+  input.start = '2021-01-02';
+  input.end = '2021-01-01';
+  await expect(async () => {
+    await client.listTransactions(input);
+  }).rejects.toThrow(InputError);
 });
 
 test('test with authentication error throws authentication error', async () => {
