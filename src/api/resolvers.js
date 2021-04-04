@@ -20,7 +20,7 @@ const mutations = {
     await connections.create({
       id,
       name,
-      token,
+      token: accessToken,
     });
     logger.info('stored new connection');
     return { id, institution: { name } };
