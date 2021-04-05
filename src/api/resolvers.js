@@ -1,5 +1,6 @@
 import logger from 'logger';
 import { Connections } from 'storage/models';
+import DateTime from 'utils/datetime';
 
 const mutations = {
   createConnection: async (
@@ -49,8 +50,8 @@ const queries = {
     const connections = new Connections({ environment, storageClient, user });
     const savedConnections = await connections.list();
     return financeClient.listTransactions({
-      end: '2021-01-31',
-      start: '2021-01-01',
+      end: DateTime.now().endOf('month').toISODate(),
+      start: DateTime.now().startOf('year').toISODate(),
       token: savedConnections[0].token,
     });
   },
