@@ -1,6 +1,6 @@
-import logger from 'logger';
 import { Connections } from 'storage/models';
 import DateTime from 'utils/datetime';
+import logger from 'utils/logger';
 
 const mutations = {
   createConnection: async (

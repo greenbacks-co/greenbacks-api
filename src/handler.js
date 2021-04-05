@@ -1,9 +1,9 @@
 import buildServer from 'api';
 import { decodeToken } from 'authorizer';
 import FinanceClient from 'finance';
-import logger from 'logger';
 import settings from 'settings';
 import StorageClient from 'storage/client';
+import logger from 'utils/logger';
 
 const buildFinanceClient = () => {
   try {
