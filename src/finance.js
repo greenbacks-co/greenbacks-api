@@ -2,18 +2,23 @@ import { Client, environments } from 'plaid';
 
 import { InputError } from 'errors';
 
+const PAGE_SIZE = 250;
+
 class FinanceClient {
   constructor(input) {
     validateConstructorInput(input);
-    const { env, id, secret } = input;
-    this.client = new Client({
-      clientID: id,
-      env: environments[env],
-      secret,
-      options: {
-        version: '2019-05-29',
-      },
-    });
+    const { client, env, id, secret } = input;
+    if (client) this.client = client;
+    else {
+      this.client = new Client({
+        clientID: id,
+        env: environments[env],
+        secret,
+        options: {
+          version: '2019-05-29',
+        },
+      });
+    }
   }
 
   async createConnectionInitializationToken(input) {
@@ -69,6 +74,23 @@ class FinanceClient {
       throw new TokenError();
     }
   }
+
+  async listTransactions(input) {
+    validateListTransactionsInput(input);
+    const { end, start, page = 1, token } = input;
+    const offset = (page - 1) * PAGE_SIZE;
+    try {
+      const result = await this.client.getTransactions(token, start, end, {
+        count: PAGE_SIZE,
+        offset,
+      });
+      return result.transactions;
+    } catch (error) {
+      if (error.message === 'INVALID_FIELD') throw new AuthenticationError();
+      if (error.message === 'INVALID_ACCESS_TOKEN') throw new TokenError();
+      throw error;
+    }
+  }
 }
 
 const validateConstructorInput = ({ env, id, secret }) => {
@@ -87,6 +109,13 @@ const validateDescribeAccountInput = ({ token }) => {
 
 const validateExchangeTemporaryConnectionTokenInput = ({ token }) => {
   if (!token) throw new InputError('token');
+};
+
+const validateListTransactionsInput = ({ end, start, token }) => {
+  if (!end) throw new InputError('end');
+  if (!start) throw new InputError('start');
+  if (!token) throw new InputError('token');
+  if (start > end) throw new InputError('end');
 };
 
 export class AuthenticationError extends Error {

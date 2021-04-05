@@ -1,7 +1,7 @@
 import { Server } from 'api/graphql';
 import resolvers from 'api/resolvers';
 import schema from 'api/schema';
-import logger from 'logger';
+import logger from 'utils/logger';
 
 const buildServer = ({ buildClients, environment, parseUser }) =>
   new Server({

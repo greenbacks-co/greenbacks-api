@@ -1,5 +1,5 @@
 import { InputError } from 'errors';
-import logger from 'logger';
+import logger from 'utils/logger';
 import {
   AuthenticationError,
   isAuthenticationError,

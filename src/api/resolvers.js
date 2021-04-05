@@ -1,5 +1,6 @@
-import logger from 'logger';
 import { Connections } from 'storage/models';
+import DateTime from 'utils/datetime';
+import logger from 'utils/logger';
 
 const mutations = {
   createConnection: async (
@@ -20,7 +21,7 @@ const mutations = {
     await connections.create({
       id,
       name,
-      token,
+      token: accessToken,
     });
     logger.info('stored new connection');
     return { id, institution: { name } };
@@ -40,6 +41,19 @@ const queries = {
   ) => {
     const connections = new Connections({ environment, storageClient, user });
     return connections.list();
+  },
+  getTransactions: async (
+    _source,
+    _args,
+    { dataSources: { financeClient, storageClient }, environment, user }
+  ) => {
+    const connections = new Connections({ environment, storageClient, user });
+    const savedConnections = await connections.list();
+    return financeClient.listTransactions({
+      end: DateTime.now().endOf('month').toISODate(),
+      start: DateTime.now().startOf('year').toISODate(),
+      token: savedConnections[0].token,
+    });
   },
 };
 

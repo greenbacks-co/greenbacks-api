@@ -10,6 +10,12 @@ const schema = gql`
     name: String!
   }
 
+  type Transaction {
+    amount: Float!
+    date: String!
+    name: String!
+  }
+
   input CreateConnectionInput {
     token: String!
   }
@@ -21,6 +27,7 @@ const schema = gql`
   type Query {
     getConnectionInitializationToken: String!
     getConnections: [Connection]
+    getTransactions: [Transaction]
   }
 `;
 
