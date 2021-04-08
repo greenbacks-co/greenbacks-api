@@ -5,7 +5,9 @@ const logger = createLogger({
     format.timestamp(),
     format.printf(
       ({ level, message, timestamp }) =>
-        `${timestamp} [${level.toUpperCase()}] ${message}`
+        `[${timestamp}] [${level.toUpperCase()}] ${
+          message instanceof Object ? JSON.stringify(message, null, 2) : message
+        }`
     ),
     format.colorize({ all: true })
   ),
