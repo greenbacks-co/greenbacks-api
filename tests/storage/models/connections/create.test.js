@@ -189,7 +189,6 @@ test('test create has matching createdDate and modifiedDate', async () => {
   const client = new ClientStub();
   const constructorInput = getConstructorInput(client);
   const input = getInput();
-  input.foo = 'bar';
   const connections = new Connections(constructorInput);
   await connections.create(input);
   expect(client.createdConnection.item.createdDate).toMatch(ISO_FORMAT);
