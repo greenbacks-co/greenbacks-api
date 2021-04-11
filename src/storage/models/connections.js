@@ -25,28 +25,19 @@ class Connections {
         token,
         user: this.user,
       },
+      key: {
+        partition: {
+          name: 'user',
+          type: 'string',
+        },
+        sort: {
+          name: 'token',
+          type: 'string',
+        },
+      },
       table: this.table,
     };
-    try {
-      await this.storageClient.addItem(addItemInput);
-    } catch (error) {
-      if (error instanceof MissingTableError) {
-        await this.storageClient.createTable({
-          key: {
-            partition: {
-              name: 'user',
-              type: 'string',
-            },
-            sort: {
-              name: 'token',
-              type: 'string',
-            },
-          },
-          name: this.table,
-        });
-        await this.storageClient.addItem(addItemInput);
-      } else throw error;
-    }
+    await this.storageClient.addItemAndCreateTable(addItemInput);
   }
 
   async list() {

@@ -64,8 +64,8 @@ test(
     });
     expect(item.createdDate).toMatch(ISO_FORMAT);
     expect(item.id).toBe('id');
+    expect(item.institution.name).toBe('name');
     expect(item.modifiedDate).toMatch(ISO_FORMAT);
-    expect(item.name).toBe('name');
     expect(item.token).toBe('token');
     expect(item.user).toBe('user');
     expect(item.createdDate).toBe(item.modifiedDate);
@@ -94,8 +94,8 @@ test(
     });
     expect(item.createdDate).toMatch(ISO_FORMAT);
     expect(item.id).toBe('id');
+    expect(item.institution.name).toBe('name');
     expect(item.modifiedDate).toMatch(ISO_FORMAT);
-    expect(item.name).toBe('name');
     expect(item.token).toBe('token');
     expect(item.user).toBe('user');
     expect(item.createdDate).toBe(item.modifiedDate);

@@ -32,7 +32,7 @@ class StorageClient {
 
   async addItemAndCreateTable(input) {
     validateAddItemAndCreateTableInput(input);
-    let { addItem, createTable } = input;
+    const { addItem, createTable } = input;
     const { item, key, table } = input;
     try {
       return await this.addItem({
@@ -45,7 +45,7 @@ class StorageClient {
         key,
         name: table,
       });
-      await this.addItem({
+      return await this.addItem({
         item,
         table,
       });
