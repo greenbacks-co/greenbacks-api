@@ -6,6 +6,10 @@ const schema = gql`
     institution: Institution!
   }
 
+  input CreateConnectionInput {
+    token: String!
+  }
+
   type Institution {
     name: String!
   }
@@ -16,12 +20,13 @@ const schema = gql`
     name: String!
   }
 
-  input CreateConnectionInput {
-    token: String!
+  type UpdateTransactionsResponse {
+    status: String!
   }
 
   type Mutation {
     createConnection(input: CreateConnectionInput!): Connection
+    updateTransactions: UpdateTransactionsResponse
   }
 
   type Query {

@@ -26,6 +26,24 @@ const mutations = {
     logger.info('stored new connection');
     return { id, institution: { name } };
   },
+  updateTransactions: async (
+    _source,
+    _args,
+    { dataSources: { financeClient, storageClient }, environment, user }
+  ) => {
+    logger.info('update transactions');
+    const connections = new Connections({ environment, storageClient, user });
+    const savedConnections = await connections.list();
+    logger.info(savedConnections);
+    savedConnections.forEach(async (connection) => {
+      const transactions = await financeClient.listTransactions({
+        end: DateTime.now().endOf('month').toISODate(),
+        start: DateTime.now().startOf('year').toISODate(),
+        token: savedConnections[0].token,
+      });
+    });
+    return { status: 'success' };
+  },
 };
 
 const queries = {
@@ -49,11 +67,13 @@ const queries = {
   ) => {
     const connections = new Connections({ environment, storageClient, user });
     const savedConnections = await connections.list();
-    return financeClient.listTransactions({
+    const transactions = await financeClient.listTransactions({
       end: DateTime.now().endOf('month').toISODate(),
       start: DateTime.now().startOf('year').toISODate(),
       token: savedConnections[0].token,
     });
+    logger.info(transactions);
+    return transactions;
   },
 };
 
