@@ -2,15 +2,11 @@ import 'babel-polyfill';
 
 import { InputError } from 'errors';
 import { Connections } from 'storage/models';
-import { MissingTableError } from 'storage/client';
 
 const ISO_FORMAT = /\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/;
 
 class ClientStub {
-  constructor({
-    shouldThrowError = false,
-    shouldThrowMissingTableError = false,
-  } = {}) {
+  constructor({ shouldThrowError = false } = {}) {
     this.createdConnection = null;
     this.shouldThrowError = shouldThrowError;
   }

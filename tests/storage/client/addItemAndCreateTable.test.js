@@ -25,7 +25,7 @@ class ClientStub {
 const getClient = () =>
   new Client({ credentials: { id: 'test', secret: 'test' } });
 
-const getInput = (stub) => ({
+const getInput = () => ({
   item: { id: 'test' },
   key: { partition: { name: 'test', type: 'string' } },
   table: 'test',
