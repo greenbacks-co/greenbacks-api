@@ -139,6 +139,32 @@ test('list items with nested boolean removes boolean identifier', async () => {
   expect(result).toStrictEqual([{ id: 'test', nested: { test: true } }]);
 });
 
+test('list items with nested array is successful', async () => {
+  const credentials = getCredentials();
+  const input = getInput();
+  const client = new StorageClient({
+    ...credentials,
+    client: new SdkStub({
+      result: [{ id: 'test', nested: ['test'] }],
+    }),
+  });
+  const result = await client.listItems(input);
+  expect(result).toStrictEqual([{ id: 'test', nested: ['test'] }]);
+});
+
+test('list items with nested null is successful', async () => {
+  const credentials = getCredentials();
+  const input = getInput();
+  const client = new StorageClient({
+    ...credentials,
+    client: new SdkStub({
+      result: [{ id: 'test', nested: null }],
+    }),
+  });
+  const result = await client.listItems(input);
+  expect(result).toStrictEqual([{ id: 'test', nested: null }]);
+});
+
 test('list items with should reverse true calls query with scan index forward false', async () => {
   const stub = new SdkStub();
   const credentials = getCredentials();

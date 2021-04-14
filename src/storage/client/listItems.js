@@ -70,7 +70,7 @@ const removeTypes = (object) => {
   if (S) return S;
   const result = {};
   Object.entries(object).forEach(([key, value]) => {
-    if (typeof value === 'object') {
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
       result[key] = removeTypes(value);
     } else {
       result[key] = value;
