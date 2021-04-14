@@ -7,9 +7,9 @@ import {
 
 const listItems = (input) => {
   validateInput(input);
-  const { client, key, table } = input;
+  const { client, key, shouldReverse = false, table } = input;
   return new Promise((resolve, reject) => {
-    const queryParameters = buildQueryParameters({ key, table });
+    const queryParameters = buildQueryParameters({ key, shouldReverse, table });
     client.query(queryParameters, (error, result) => {
       if (error) {
         if (isAuthenticationError(error)) {
@@ -39,12 +39,17 @@ const validateInput = ({ client, key: { partition } = {}, table }) => {
     throw new InputError('partition', 'key');
 };
 
-const buildQueryParameters = ({ key: { partition }, table }) => ({
+const buildQueryParameters = ({
+  key: { partition },
+  shouldReverse,
+  table,
+}) => ({
   ExpressionAttributeNames: { '#partitionName': Object.keys(partition)[0] },
   ExpressionAttributeValues: {
     ':partitionValue': Object.values(partition)[0],
   },
   KeyConditionExpression: '#partitionName = :partitionValue',
+  ScanIndexForward: !shouldReverse,
   TableName: table,
 });
 
