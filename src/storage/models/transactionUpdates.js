@@ -1,4 +1,5 @@
 import { InputError } from 'errors';
+import { MissingTableError } from 'storage/client/errors';
 import DateTime from 'utils/datetime';
 
 class TransactionUpdates {
@@ -36,6 +37,22 @@ class TransactionUpdates {
       table: this.table,
     };
     await this.storageClient.addItemAndCreateTable(clientInput);
+  }
+
+  async getLatest() {
+    const clientInput = {
+      key: { partition: { user: this.user } },
+      limit: 1,
+      shouldReverse: true,
+      table: this.table,
+    };
+    try {
+      const latestUpdate = await this.storageClient.listItems(clientInput);
+      return latestUpdate;
+    } catch (error) {
+      if (error instanceof MissingTableError) return null;
+      throw error;
+    }
   }
 }
 
