@@ -1,6 +1,7 @@
 import { InputError } from 'errors';
 import { MissingTableError } from 'storage/client/errors';
 import DateTime from 'utils/datetime';
+import logger from 'utils/logger';
 
 class TransactionUpdates {
   constructor(input) {
@@ -37,6 +38,7 @@ class TransactionUpdates {
       table: this.table,
     };
     await this.storageClient.addItemAndCreateTable(clientInput);
+    logger.info('started transaction update');
   }
 
   async getLatest() {
