@@ -7,9 +7,14 @@ import {
 
 const listItems = (input) => {
   validateInput(input);
-  const { client, key, shouldReverse = false, table } = input;
+  const { client, key, limit, shouldReverse = false, table } = input;
   return new Promise((resolve, reject) => {
-    const queryParameters = buildQueryParameters({ key, shouldReverse, table });
+    const queryParameters = buildQueryParameters({
+      key,
+      limit,
+      shouldReverse,
+      table,
+    });
     client.query(queryParameters, (error, result) => {
       if (error) {
         if (isAuthenticationError(error)) {
@@ -41,17 +46,22 @@ const validateInput = ({ client, key: { partition } = {}, table }) => {
 
 const buildQueryParameters = ({
   key: { partition },
+  limit,
   shouldReverse,
   table,
-}) => ({
-  ExpressionAttributeNames: { '#partitionName': Object.keys(partition)[0] },
-  ExpressionAttributeValues: {
-    ':partitionValue': Object.values(partition)[0],
-  },
-  KeyConditionExpression: '#partitionName = :partitionValue',
-  ScanIndexForward: !shouldReverse,
-  TableName: table,
-});
+}) => {
+  const parameters = {
+    ExpressionAttributeNames: { '#partitionName': Object.keys(partition)[0] },
+    ExpressionAttributeValues: {
+      ':partitionValue': Object.values(partition)[0],
+    },
+    KeyConditionExpression: '#partitionName = :partitionValue',
+    ScanIndexForward: !shouldReverse,
+    TableName: table,
+  };
+  if (limit) parameters.Limit = limit;
+  return parameters;
+};
 
 const removeTypes = (object) => {
   const { B, N, S } = object;

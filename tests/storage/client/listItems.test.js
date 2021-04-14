@@ -176,3 +176,29 @@ test('list items without should reverse calls query with scan index forward true
   await client.listItems(input);
   expect(stub.call.ScanIndexForward).toBe(true);
 });
+
+test('list items with limit calls query with limit', async () => {
+  const stub = new SdkStub();
+  const credentials = getCredentials();
+  const input = getInput();
+  input.limit = 1;
+  const client = new StorageClient({
+    ...credentials,
+    client: stub,
+  });
+  await client.listItems(input);
+  expect(stub.call.Limit).toBe(1);
+});
+
+test('list items without limit calls query without limit', async () => {
+  const stub = new SdkStub();
+  const credentials = getCredentials();
+  const input = getInput();
+  delete input.limit;
+  const client = new StorageClient({
+    ...credentials,
+    client: stub,
+  });
+  await client.listItems(input);
+  expect(stub.call).not.toHaveProperty('Limit');
+});

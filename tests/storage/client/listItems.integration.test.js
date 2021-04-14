@@ -207,3 +207,16 @@ test('list items written in descending order wihout should reverse returns items
     { id: 1, date: '2020-01-02' },
   ]);
 });
+
+test('list two items with limit 1 returns one item', async () => {
+  const name = `${TABLE_PREFIX}-${uuid()}`;
+  const credentials = getCredentials();
+  const client = new StorageClient({ credentials });
+  const input = getInput(name, { id: 1 });
+  input.limit = 1;
+  await createTableWithSortKey(name);
+  await createItem(name, { id: 1, date: '2020-01-01' });
+  await createItem(name, { id: 1, date: '2020-01-02' });
+  const items = await client.listItems(input);
+  expect(items).toStrictEqual([{ id: 1, date: '2020-01-01' }]);
+});
