@@ -5,10 +5,12 @@ import Updates from 'storage/models/transactionUpdates';
 
 class ClientStub {
   constructor({
+    result = [{}],
     shouldThrow = false,
     shouldThrowMissingTableError = false,
   } = {}) {
     this.call = null;
+    this.result = result;
     this.shouldThrow = shouldThrow;
     this.shouldThrowMissingTableError = shouldThrowMissingTableError;
   }
@@ -19,7 +21,7 @@ class ClientStub {
       if (this.shouldThrow) reject(new Error());
       if (this.shouldThrowMissingTableError)
         reject(new MissingTableError('test'));
-      resolve();
+      resolve(this.result);
     });
   }
 }
@@ -95,4 +97,12 @@ test('get latest update with error throws error', async () => {
   await expect(async () => {
     await updates.getLatest();
   }).rejects.toThrow(Error);
+});
+
+test('get latest update returns first element in list', async () => {
+  const stub = new ClientStub({ result: [{ test: 'test' }] });
+  const input = getInput(stub);
+  const updates = new Updates(input);
+  const result = await updates.getLatest();
+  expect(result).toStrictEqual({ test: 'test' });
 });

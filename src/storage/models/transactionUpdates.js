@@ -49,8 +49,8 @@ class TransactionUpdates {
       table: this.table,
     };
     try {
-      const latestUpdate = await this.storageClient.listItems(clientInput);
-      return latestUpdate;
+      const updates = await this.storageClient.listItems(clientInput);
+      return updates[0];
     } catch (error) {
       if (error instanceof MissingTableError) return null;
       throw error;
