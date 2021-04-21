@@ -1,7 +1,7 @@
 import 'babel-polyfill';
 
 import { InputError } from 'errors';
-import Transactions from 'storage/models/pendingTransactions';
+import Transactions from 'storage/models/transactions';
 
 const getInput = () => ({
   environment: 'test',

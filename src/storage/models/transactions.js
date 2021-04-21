@@ -1,6 +1,6 @@
 import { InputError } from 'errors';
 
-class PendingTransactions {
+class Transactions {
   constructor(input) {
     validateConstructorInput(input);
     const { environment, storageClient, user } = input;
@@ -16,4 +16,4 @@ const validateConstructorInput = ({ environment, storageClient, user }) => {
   if (!user) throw new InputError();
 };
 
-export default PendingTransactions;
+export default Transactions;
