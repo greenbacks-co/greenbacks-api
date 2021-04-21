@@ -5,7 +5,7 @@ class Transactions {
     validateConstructorInput(input);
     const { environment, storageClient, user } = input;
     this.storageClient = storageClient;
-    this.table = `${environment}-pending-transactions`;
+    this.table = `${environment}-transactions`;
     this.user = user;
   }
 }
