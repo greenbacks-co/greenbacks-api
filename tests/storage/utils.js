@@ -14,7 +14,7 @@ export const getCredentials = () => ({
   secret: settings.STORAGE_SECRET,
 });
 
-const getDocumentClient = () =>
+export const getDocumentClient = () =>
   new DynamoDB.DocumentClient({
     accessKeyId: settings.STORAGE_ID,
     region: 'us-east-1',

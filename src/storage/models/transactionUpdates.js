@@ -17,7 +17,7 @@ class TransactionUpdates {
     const { connections } = input;
     const now = DateTime.now().toString();
     const clientInput = {
-      item: {
+      items: {
         connections,
         createdDate: now,
         error: null,
@@ -37,7 +37,7 @@ class TransactionUpdates {
       },
       table: this.table,
     };
-    await this.storageClient.addItemAndCreateTable(clientInput);
+    await this.storageClient.addItemsAndCreateTable(clientInput);
     logger.info('started transaction update');
   }
 

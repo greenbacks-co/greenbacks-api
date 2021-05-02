@@ -13,12 +13,14 @@ import {
   getItem,
 } from '../../utils';
 
-const TABLE_PREFIX = 'test-add-item-item-configuration';
+const TABLE_PREFIX = 'test-add-items-item-configuration';
 
 const getInput = (table) => ({
-  item: {
-    id: 1,
-  },
+  items: [
+    {
+      id: 1,
+    },
+  ],
   table,
 });
 
@@ -26,39 +28,50 @@ afterAll(async () => {
   await deleteTablesAfterDelay(TABLE_PREFIX);
 }, DELAYS.deleteTables);
 
-test('add item without item throws input error', async () => {
+test('add items without items throws input error', async () => {
   const name = `${TABLE_PREFIX}-${uuid()}`;
   const input = getInput(name);
   const credentials = getCredentials();
   const client = new StorageClient({ credentials });
-  delete input.item;
+  delete input.items;
   expect(async () => {
-    await client.addItem(input);
+    await client.addItems(input);
   }).rejects.toThrow(InputError);
 });
 
-test('add item with empty item throws input error', async () => {
+test('add items with empty items throws input error', async () => {
   const name = `${TABLE_PREFIX}-${uuid()}`;
   const input = getInput(name);
   const credentials = getCredentials();
   const client = new StorageClient({ credentials });
-  input.item = {};
+  input.items = [];
   expect(async () => {
-    await client.addItem(input);
+    await client.addItems(input);
+  }).rejects.toThrow(InputError);
+});
+
+test('add items with empty item in items throws input error', async () => {
+  const name = `${TABLE_PREFIX}-${uuid()}`;
+  const input = getInput(name);
+  const credentials = getCredentials();
+  const client = new StorageClient({ credentials });
+  input.items = [{}];
+  expect(async () => {
+    await client.addItems(input);
   }).rejects.toThrow(InputError);
 });
 
 test(
-  'add item with string value is successful',
+  'add items with string value is successful',
   async () => {
     const name = `${TABLE_PREFIX}-${uuid()}`;
     await createTable(name);
     const input = getInput(name);
     const credentials = getCredentials();
     const client = new StorageClient({ credentials });
-    input.item = { id: 1, test: 'test' };
+    input.items = [{ id: 1, test: 'test' }];
     await delay(DELAYS.createTable);
-    await client.addItem(input);
+    await client.addItems(input);
     const item = await getItem(name, 1);
     expect(item.test).toBe('test');
   },
@@ -66,16 +79,16 @@ test(
 );
 
 test(
-  'add item with numeric value is successful',
+  'add items with numeric value is successful',
   async () => {
     const name = `${TABLE_PREFIX}-${uuid()}`;
     await createTable(name);
     const input = getInput(name);
     const credentials = getCredentials();
     const client = new StorageClient({ credentials });
-    input.item = { id: 1, test: 1 };
+    input.items = [{ id: 1, test: 1 }];
     await delay(DELAYS.createTable);
-    await client.addItem(input);
+    await client.addItems(input);
     const item = await getItem(name, 1);
     expect(item.test).toBe(1);
   },
@@ -83,16 +96,16 @@ test(
 );
 
 test(
-  'add item with boolean value is successful',
+  'add items with boolean value is successful',
   async () => {
     const name = `${TABLE_PREFIX}-${uuid()}`;
     await createTable(name);
     const input = getInput(name);
     const credentials = getCredentials();
     const client = new StorageClient({ credentials });
-    input.item = { id: 1, test: true };
+    input.items = [{ id: 1, test: true }];
     await delay(DELAYS.createTable);
-    await client.addItem(input);
+    await client.addItems(input);
     const item = await getItem(name, 1);
     expect(item.test).toBe(true);
   },
@@ -100,16 +113,16 @@ test(
 );
 
 test(
-  'add item with object value is successful',
+  'add items with object value is successful',
   async () => {
     const name = `${TABLE_PREFIX}-${uuid()}`;
     await createTable(name);
     const input = getInput(name);
     const credentials = getCredentials();
     const client = new StorageClient({ credentials });
-    input.item = { id: 1, test: { test: 'test' } };
+    input.items = [{ id: 1, test: { test: 'test' } }];
     await delay(DELAYS.createTable);
-    await client.addItem(input);
+    await client.addItems(input);
     const item = await getItem(name, 1);
     expect(item.test).toStrictEqual({ test: 'test' });
   },
@@ -117,16 +130,16 @@ test(
 );
 
 test(
-  'add item with list value is successful',
+  'add items with list value is successful',
   async () => {
     const name = `${TABLE_PREFIX}-${uuid()}`;
     await createTable(name);
     const input = getInput(name);
     const credentials = getCredentials();
     const client = new StorageClient({ credentials });
-    input.item = { id: 1, test: [1] };
+    input.items = [{ id: 1, test: [1] }];
     await delay(DELAYS.createTable);
-    await client.addItem(input);
+    await client.addItems(input);
     const item = await getItem(name, 1);
     expect(item.test).toStrictEqual([1]);
   },

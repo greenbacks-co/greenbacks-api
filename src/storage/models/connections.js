@@ -14,8 +14,8 @@ class Connections {
     validateCreateInput(input);
     const { id, name, token } = input;
     const now = new Date().toISOString();
-    const addItemInput = {
-      item: {
+    const addItemsInput = {
+      items: {
         createdDate: now,
         id,
         institution: {
@@ -37,7 +37,7 @@ class Connections {
       },
       table: this.table,
     };
-    await this.storageClient.addItemAndCreateTable(addItemInput);
+    await this.storageClient.addItemsAndCreateTable(addItemsInput);
   }
 
   async list() {

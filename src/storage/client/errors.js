@@ -30,6 +30,11 @@ export const isInvalidKeyError = (error) => {
     )
   )
     return true;
+  if (
+    error.name === 'ValidationException' &&
+    error.message === 'The provided key element does not match the schema'
+  )
+    return true;
   return false;
 };
 
