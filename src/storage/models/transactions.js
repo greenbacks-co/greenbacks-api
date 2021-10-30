@@ -8,6 +8,11 @@ class Transactions {
     this.table = `${environment}-transactions`;
     this.user = user;
   }
+
+  async create(input) {
+    validateCreateInput(input);
+    this.storageClient.addItemsAndCreateTable({ table: this.table });
+  }
 }
 
 const validateConstructorInput = ({ environment, storageClient, user }) => {
@@ -15,5 +20,7 @@ const validateConstructorInput = ({ environment, storageClient, user }) => {
   if (!storageClient) throw new InputError();
   if (!user) throw new InputError();
 };
+
+const validateCreateInput = ({}) => {};
 
 export default Transactions;

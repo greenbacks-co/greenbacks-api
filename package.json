@@ -36,7 +36,8 @@
     "prettier": "2.2.1",
     "serverless-offline": "^6.8.0",
     "serverless-webpack": "^5.3.5",
-    "webpack": "^5.21.1"
+    "webpack": "^5.38.1",
+    "webpack-cli": "^4.7.0"
   },
   "dependencies": {
     "apollo-server-lambda": "^2.20.0",
