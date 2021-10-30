@@ -10,7 +10,7 @@ class ClientStub {
   }
 
   async addItemsAndCreateTable({ items, key, table }) {
-    this.arguments = { item, key, table };
+    this.arguments = { items, key, table };
   }
 }
 

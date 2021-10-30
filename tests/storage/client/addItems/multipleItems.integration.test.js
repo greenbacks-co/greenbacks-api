@@ -5,12 +5,9 @@ import { v4 as uuid } from 'uuid';
 import StorageClient from 'storage/client';
 import {
   createTable,
-  delay,
   DELAYS,
-  deleteTablesAfterDelay,
   getDocumentClient,
   getCredentials,
-  getItem,
 } from '../../utils';
 
 const TABLE_PREFIX = 'test-add-items-multiple-items';
@@ -64,7 +61,7 @@ const getItems = async ({ table, partition }) => {
         reject(error);
         return;
       }
-      resolve(result['Items']);
+      resolve(result.Items);
     });
   });
 };

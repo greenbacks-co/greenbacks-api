@@ -9,8 +9,7 @@ class Transactions {
     this.user = user;
   }
 
-  async create(input) {
-    validateCreateInput(input);
+  async create() {
     this.storageClient.addItemsAndCreateTable({ table: this.table });
   }
 }
@@ -20,7 +19,5 @@ const validateConstructorInput = ({ environment, storageClient, user }) => {
   if (!storageClient) throw new InputError();
   if (!user) throw new InputError();
 };
-
-const validateCreateInput = ({}) => {};
 
 export default Transactions;
