@@ -6,9 +6,11 @@ import StorageClient from 'storage/client';
 class SdkStub {
   constructor({ result = [] } = {}) {
     this.result = result;
+    this.call = null;
   }
 
   query(input, callback) {
+    this.call = input;
     callback(null, { Items: this.result });
   }
 }
@@ -24,6 +26,7 @@ const getInput = () => ({
   key: {
     partition: { id: 1 },
   },
+  shouldReverse: false,
   table: 'test-table',
 });
 
@@ -134,4 +137,94 @@ test('list items with nested boolean removes boolean identifier', async () => {
   });
   const result = await client.listItems(input);
   expect(result).toStrictEqual([{ id: 'test', nested: { test: true } }]);
+});
+
+test('list items with nested array is successful', async () => {
+  const credentials = getCredentials();
+  const input = getInput();
+  const client = new StorageClient({
+    ...credentials,
+    client: new SdkStub({
+      result: [{ id: 'test', nested: ['test'] }],
+    }),
+  });
+  const result = await client.listItems(input);
+  expect(result).toStrictEqual([{ id: 'test', nested: ['test'] }]);
+});
+
+test('list items with nested null is successful', async () => {
+  const credentials = getCredentials();
+  const input = getInput();
+  const client = new StorageClient({
+    ...credentials,
+    client: new SdkStub({
+      result: [{ id: 'test', nested: null }],
+    }),
+  });
+  const result = await client.listItems(input);
+  expect(result).toStrictEqual([{ id: 'test', nested: null }]);
+});
+
+test('list items with should reverse true calls query with scan index forward false', async () => {
+  const stub = new SdkStub();
+  const credentials = getCredentials();
+  const input = getInput();
+  input.shouldReverse = true;
+  const client = new StorageClient({
+    ...credentials,
+    client: stub,
+  });
+  await client.listItems(input);
+  expect(stub.call.ScanIndexForward).toBe(false);
+});
+
+test('list items with should reverse false calls query with scan index forward true', async () => {
+  const stub = new SdkStub();
+  const credentials = getCredentials();
+  const input = getInput();
+  const client = new StorageClient({
+    ...credentials,
+    client: stub,
+  });
+  await client.listItems(input);
+  expect(stub.call.ScanIndexForward).toBe(true);
+});
+
+test('list items without should reverse calls query with scan index forward true', async () => {
+  const stub = new SdkStub();
+  const credentials = getCredentials();
+  const input = getInput();
+  delete input.shouldReverse;
+  const client = new StorageClient({
+    ...credentials,
+    client: stub,
+  });
+  await client.listItems(input);
+  expect(stub.call.ScanIndexForward).toBe(true);
+});
+
+test('list items with limit calls query with limit', async () => {
+  const stub = new SdkStub();
+  const credentials = getCredentials();
+  const input = getInput();
+  input.limit = 1;
+  const client = new StorageClient({
+    ...credentials,
+    client: stub,
+  });
+  await client.listItems(input);
+  expect(stub.call.Limit).toBe(1);
+});
+
+test('list items without limit calls query without limit', async () => {
+  const stub = new SdkStub();
+  const credentials = getCredentials();
+  const input = getInput();
+  delete input.limit;
+  const client = new StorageClient({
+    ...credentials,
+    client: stub,
+  });
+  await client.listItems(input);
+  expect(stub.call).not.toHaveProperty('Limit');
 });

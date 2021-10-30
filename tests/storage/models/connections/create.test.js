@@ -2,32 +2,18 @@ import 'babel-polyfill';
 
 import { InputError } from 'errors';
 import { Connections } from 'storage/models';
-import { MissingTableError } from 'storage/client';
 
 const ISO_FORMAT = /\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/;
 
 class ClientStub {
-  constructor({
-    shouldThrowError = false,
-    shouldThrowMissingTableError = false,
-  } = {}) {
-    this.addItemCalls = 0;
-    this.createdConnection = {};
-    this.createdTable = {};
+  constructor({ shouldThrowError = false } = {}) {
+    this.createdConnection = null;
     this.shouldThrowError = shouldThrowError;
-    this.shouldThrowMissingTableError = shouldThrowMissingTableError;
   }
 
-  async addItem({ item, table }) {
-    this.addItemCalls += 1;
-    if (this.shouldThrowMissingTableError && this.addItemCalls === 1)
-      throw new MissingTableError(table);
+  async addItemAndCreateTable({ item, key, table }) {
     if (this.shouldThrowError) throw new Error();
-    this.createdConnection = { item, table };
-  }
-
-  async createTable({ key, name }) {
-    this.createdTable = { key, name };
+    this.createdConnection = { item, key, table };
   }
 }
 
@@ -189,7 +175,6 @@ test('test create has matching createdDate and modifiedDate', async () => {
   const client = new ClientStub();
   const constructorInput = getConstructorInput(client);
   const input = getInput();
-  input.foo = 'bar';
   const connections = new Connections(constructorInput);
   await connections.create(input);
   expect(client.createdConnection.item.createdDate).toMatch(ISO_FORMAT);
@@ -199,7 +184,7 @@ test('test create has matching createdDate and modifiedDate', async () => {
   );
 });
 
-test('test create with environment foo and missing table creates table foo-connections', async () => {
+test('test create calls add item and create table with correct key', async () => {
   const client = new ClientStub({
     shouldThrowMissingTableError: true,
   });
@@ -207,30 +192,7 @@ test('test create with environment foo and missing table creates table foo-conne
   const input = getInput();
   const connections = new Connections(constructorInput);
   await connections.create(input);
-  expect(client.createdTable.name).toBe('foo-connections');
-});
-
-test('test create with environment bar and missing table creates table bar-connections', async () => {
-  const client = new ClientStub({
-    shouldThrowMissingTableError: true,
-  });
-  const constructorInput = getConstructorInput(client);
-  constructorInput.environment = 'bar';
-  const input = getInput();
-  const connections = new Connections(constructorInput);
-  await connections.create(input);
-  expect(client.createdTable.name).toBe('bar-connections');
-});
-
-test('test create with missing table creates table with correct key', async () => {
-  const client = new ClientStub({
-    shouldThrowMissingTableError: true,
-  });
-  const constructorInput = getConstructorInput(client);
-  const input = getInput();
-  const connections = new Connections(constructorInput);
-  await connections.create(input);
-  expect(client.createdTable.key).toStrictEqual({
+  expect(client.createdConnection.key).toStrictEqual({
     partition: {
       name: 'user',
       type: 'string',
@@ -240,17 +202,6 @@ test('test create with missing table creates table with correct key', async () =
       type: 'string',
     },
   });
-});
-
-test('test create with missing table error calls add item twice', async () => {
-  const client = new ClientStub({
-    shouldThrowMissingTableError: true,
-  });
-  const constructorInput = getConstructorInput(client);
-  const input = getInput();
-  const connections = new Connections(constructorInput);
-  await connections.create(input);
-  expect(client.addItemCalls).toBe(2);
 });
 
 test('test create with error throws error', async () => {

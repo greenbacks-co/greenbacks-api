@@ -14,7 +14,7 @@ export const getCredentials = () => ({
   secret: settings.STORAGE_SECRET,
 });
 
-const getDocumentClient = () =>
+export const getDocumentClient = () =>
   new DynamoDB.DocumentClient({
     accessKeyId: settings.STORAGE_ID,
     region: 'us-east-1',
@@ -118,6 +118,8 @@ export const getItem = (table, id, date = undefined, customKey) => {
     );
   });
 };
+
+export const ISO_FORMAT = /\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/;
 
 export const listTables = async (prefix) => {
   const client = getClient();

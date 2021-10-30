@@ -21,7 +21,7 @@ const getInput = (table) => ({
     id: settings.STORAGE_ID,
     secret: settings.STORAGE_SECRET,
   },
-  item: { id: 1 },
+  items: [{ id: 1 }],
   table,
 });
 
@@ -29,38 +29,38 @@ afterAll(async () => {
   await deleteTablesAfterDelay(TABLE_PREFIX);
 }, DELAYS.deleteTables);
 
-test('add item with missing table throws input error', async () => {
+test('add items with missing table throws input error', async () => {
   const input = getInput();
   delete input.table;
   const credentials = getCredentials();
   const client = new StorageClient({ credentials });
-  expect(async () => {
-    await client.addItem(input);
+  await expect(async () => {
+    await client.addItems(input);
   }).rejects.toThrow(InputError);
 });
 
-test('add item with empty table throws input error', async () => {
+test('add items with empty table throws input error', async () => {
   const input = getInput();
   input.table = '';
   const credentials = getCredentials();
   const client = new StorageClient({ credentials });
-  expect(async () => {
-    await client.addItem(input);
+  await expect(async () => {
+    await client.addItems(input);
   }).rejects.toThrow(InputError);
 });
 
-test('add item to missing table throws missing table error', async () => {
+test('add items to missing table throws missing table error', async () => {
   const name = `${TABLE_PREFIX}-${uuid()}`;
   const input = getInput(name);
   const credentials = getCredentials();
   const client = new StorageClient({ credentials });
-  expect(async () => {
-    await client.addItem(input);
+  await expect(async () => {
+    await client.addItems(input);
   }).rejects.toThrow(MissingTableError);
 });
 
 test(
-  'add item to existing table is successful',
+  'add items to existing table is successful',
   async () => {
     const name = `${TABLE_PREFIX}-${uuid()}`;
     await createTable(name);
@@ -68,7 +68,7 @@ test(
     const credentials = getCredentials();
     const client = new StorageClient({ credentials });
     await delay(DELAYS.createTable);
-    await client.addItem(input);
+    await client.addItems(input);
     const item = await getItem(name, 1);
     expect(item).toStrictEqual({ id: 1 });
   },

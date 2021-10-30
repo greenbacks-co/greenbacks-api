@@ -1,6 +1,8 @@
-import { Connections } from 'storage/models';
+import Connections from 'storage/models/connections';
 import DateTime from 'utils/datetime';
 import logger from 'utils/logger';
+
+import updateTransactions from './updateTransactions';
 
 const mutations = {
   createConnection: async (
@@ -26,6 +28,40 @@ const mutations = {
     logger.info('stored new connection');
     return { id, institution: { name } };
   },
+  updateTransactions,
+  /*
+  : async (
+    _source,
+    _args,
+    { dataSources: { financeClient, storageClient }, environment, user }
+  ) => {
+    logger.info('update transactions');
+    const updates = new TransactionUpdates({
+      environment,
+      storageClient,
+      user,
+    });
+    const latestUpdate = await updates.getLatest();
+    logger.info(latestUpdate);
+    const connections = new Connections({ environment, storageClient, user });
+    const savedConnections = await connections.list();
+    if (latestUpdate.finishedDate) {
+      const connectionIds = savedConnections.map(({ id }) => id);
+      await updates.create({ connections: connectionIds });
+    }
+    /*
+    savedConnections.forEach(async (connection) => {
+      const transactions = await financeClient.listTransactions({
+        end: DateTime.now().endOf('month').toISODate(),
+        start: DateTime.now().startOf('year').toISODate(),
+        token: savedConnections[0].token,
+      });
+    });
+    */
+  /*
+    return { status: 'success' };
+  },
+  */
 };
 
 const queries = {
@@ -49,11 +85,13 @@ const queries = {
   ) => {
     const connections = new Connections({ environment, storageClient, user });
     const savedConnections = await connections.list();
-    return financeClient.listTransactions({
+    const transactions = await financeClient.listTransactions({
       end: DateTime.now().endOf('month').toISODate(),
-      start: DateTime.now().startOf('year').toISODate(),
+      start: DateTime.now().startOf('year').minus({ years: 2 }).toISODate(),
       token: savedConnections[0].token,
     });
+    logger.info(transactions);
+    return transactions;
   },
 };
 

@@ -26,11 +26,10 @@ const loggingPlugin = {
     logger.debug(query.trim());
     return {
       didEncounterErrors({ errors }) {
-        let message = 'encountered errors:';
+        logger.error(errors);
         errors.forEach((error) => {
-          message += `\n  ${error.name}: ${error.message}`;
+          logger.error(error.stack);
         });
-        logger.error(message);
       },
     };
   },

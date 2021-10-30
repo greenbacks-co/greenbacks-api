@@ -1,7 +1,9 @@
 import DynamoDB from 'aws-sdk/clients/dynamodb';
 
-import addItem from './addItem';
+import { InputError } from 'errors';
+import addItems from './addItems';
 import createTable from './createTable';
+import { MissingTableError } from './errors';
 import listItems from './listItems';
 
 class StorageClient {
@@ -20,12 +22,33 @@ class StorageClient {
     }
   }
 
-  async addItem(input) {
-    const result = await addItem({
+  async addItems(input) {
+    const result = await addItems({
       ...input,
       client: this.documentClient,
     });
     return result;
+  }
+
+  async addItemsAndCreateTable(input) {
+    validateAddItemsAndCreateTableInput(input);
+    const { items, key, table } = input;
+    try {
+      return await this.addItems({
+        items,
+        table,
+      });
+    } catch (error) {
+      if (!(error instanceof MissingTableError)) throw error;
+      await this.createTable({
+        key,
+        name: table,
+      });
+      return this.addItems({
+        items,
+        table,
+      });
+    }
   }
 
   async createTable(input) {
@@ -44,5 +67,11 @@ class StorageClient {
     return result;
   }
 }
+
+const validateAddItemsAndCreateTableInput = ({ items, key, table }) => {
+  if (!items) throw new InputError('items');
+  if (!key) throw new InputError('key');
+  if (!table) throw new InputError('table');
+};
 
 export default StorageClient;

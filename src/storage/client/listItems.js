@@ -7,9 +7,14 @@ import {
 
 const listItems = (input) => {
   validateInput(input);
-  const { client, key, table } = input;
+  const { client, key, limit, shouldReverse = false, table } = input;
   return new Promise((resolve, reject) => {
-    const queryParameters = buildQueryParameters({ key, table });
+    const queryParameters = buildQueryParameters({
+      key,
+      limit,
+      shouldReverse,
+      table,
+    });
     client.query(queryParameters, (error, result) => {
       if (error) {
         if (isAuthenticationError(error)) {
@@ -39,14 +44,24 @@ const validateInput = ({ client, key: { partition } = {}, table }) => {
     throw new InputError('partition', 'key');
 };
 
-const buildQueryParameters = ({ key: { partition }, table }) => ({
-  ExpressionAttributeNames: { '#partitionName': Object.keys(partition)[0] },
-  ExpressionAttributeValues: {
-    ':partitionValue': Object.values(partition)[0],
-  },
-  KeyConditionExpression: '#partitionName = :partitionValue',
-  TableName: table,
-});
+const buildQueryParameters = ({
+  key: { partition },
+  limit,
+  shouldReverse,
+  table,
+}) => {
+  const parameters = {
+    ExpressionAttributeNames: { '#partitionName': Object.keys(partition)[0] },
+    ExpressionAttributeValues: {
+      ':partitionValue': Object.values(partition)[0],
+    },
+    KeyConditionExpression: '#partitionName = :partitionValue',
+    ScanIndexForward: !shouldReverse,
+    TableName: table,
+  };
+  if (limit) parameters.Limit = limit;
+  return parameters;
+};
 
 const removeTypes = (object) => {
   const { B, N, S } = object;
@@ -55,7 +70,7 @@ const removeTypes = (object) => {
   if (S) return S;
   const result = {};
   Object.entries(object).forEach(([key, value]) => {
-    if (typeof value === 'object') {
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
       result[key] = removeTypes(value);
     } else {
       result[key] = value;

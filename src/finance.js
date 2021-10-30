@@ -2,7 +2,7 @@ import { Client, environments } from 'plaid';
 
 import { InputError } from 'errors';
 
-const PAGE_SIZE = 250;
+const PAGE_SIZE = 500;
 
 class FinanceClient {
   constructor(input) {
